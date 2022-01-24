@@ -1,0 +1,369 @@
+//Optional型
+var a: String?
+a = "hello"   
+print(a)
+//オプショナル型を操作するにはアンラップする必要がある
+// var int1: Int = 1
+// var int2: Int? = 2
+// var result = int1 + int2
+//Optional Binding
+var c: Int?
+
+// Optional型からアンラップする
+if let b = c {
+  print(b)
+} else {
+  print("値はありません")
+}
+
+//guard num がnilのときはfalse判定になり、returnする，値がある場合は、そのまま処理が続行される
+func testGuard(num: Int?) {
+    // nilだとreturnする 
+    guard let unwrappedNum = num else { return }
+    print(unwrappedNum)
+}
+testGuard(num: 5) 
+
+//??演算子 値があった場合はデフォルト値はスキップされる。
+var e : Int?
+var f = e ?? 3
+print(f)
+
+//!演算子で強制アンラップ  値の存在が明らかな場合や値がないときはプログラムを終了させたい場合のみ使用
+var g: Int? = 1
+var h = g! + 1
+print(h)
+
+//暗黙的にアンラップ  nilであった場合は同様に実行時エラーが発生する
+var i: Int! = 10
+var j = i + 10 
+print(j)
+//Optional Chaining
+var k: Int? = 10
+if let l = k?.distance(to: 1) {
+  print(l) 
+}
+
+//Null Safety言語のためコンパイルエラーになる
+//var m: String?
+//var n = m.uppercased()
+
+
+//条件式
+let a = 1
+let b = 1
+if a != b {
+  print("実行されました")
+} else {
+  print("else節が実行されました")
+}
+
+//switch文
+let c = 10
+switch c {
+case 1..<10:
+  print("1から9の値です")
+case 10...100:
+  print("10から100の値です")
+default:
+  print("それ以外の値です")
+}
+
+//enum型の指定
+enum Animal {
+  case Dog, Cat, Rabbit
+}
+let someAnimal = Animal.Dog
+switch someAnimal {
+case .Dog:
+  print("🐶")
+case .Cat:
+  print("🐱")
+default:
+  print("それ以外")
+}
+
+//where
+let d: Int? = nil
+switch d {
+case let e? where e > 10:
+  print("10より大きいです")
+case let e? where e < 10:
+  print("10より小さいです")
+default:
+  print("値が存在しません")
+}
+
+//break
+let f: Int = 1
+switch f {
+case 0...10:
+  print("ここは実行されます")
+  break
+  print("ここは実行されません")
+default:
+  break
+}
+
+//guard文
+func test(_ int:Int) {
+  guard int > 10 else { 
+    return print(int)
+  }
+}
+test(100)
+test(1)
+
+//繰り返し文
+//for-in文
+let num = [1,2,10]
+for i in num {
+  print(i)
+}
+let dictionary = ["1":10, "2":20, "3":30, "4":40, "5":50]
+for (key,value) in dictionary{
+  print("\(key): \(value)")
+}
+
+//while
+var a: Int = 0
+while a < 4 {
+  print(a)
+  a += 1
+  break
+}
+
+//continue
+for i in 1..<5 {
+  if i == 3 {
+    continue
+  }
+  print(i)
+}
+
+//defer
+func test() {
+    defer {
+        print("defer文が実行されました")
+    }
+    print("Hello")
+}
+
+test()
+
+
+//クロージャ　変数をスコープ内に閉じ込めるためのデータ構造
+let sum = { (x: Int, y: Int ) -> Int in
+return x * y
+} 
+print(sum(2,10))
+
+var c :(Int) -> Int
+c = {v in
+return v * v
+}
+print(c(2))
+
+var closure: (Int) -> Int
+// (x: Int) -> Int を省略  予め型を指定している変数にクロージャを代入する場合
+closure = { x in 
+  return x + 1
+}
+//関数と違うところ
+//外部機数名は指定できない
+//デフォルト引数を指定できない
+//簡略引数名をつけることができる
+var closure2: (Int, Int) -> Int
+// 1番目の引数が $0
+// 2番目の引数が $1
+closure2 = { 
+  return $0 + $1
+}
+let sum2 = closure2(2, 4)
+print(sum2)
+
+//トレイリングクロージャ  関数の引数のクロージャを () の外に記述できる記法
+func test(int: Int, int2: Int, callback: (Int) -> Void) {
+  callback(int)
+  callback(int2)
+}
+// トレイリングクロージャを使用して実行
+// `callback: { x in print(x) }` を `()` の外に書く
+test(int: 1, int2: 2) { 
+  x in print(x) 
+}
+
+//escaping クロージャを非同期処理の後に実行したいときに使用
+var handlers: [() -> Void] = []
+func addEscaping(escapingHandler: @escaping () -> Void){
+  return handlers.append(escapingHandler)
+}
+addEscaping{
+  print("hello, 1")
+}
+handlers.forEach { $0() }
+
+//クロージャ式の用途
+let num = [1, 2, 3, 4, 5]
+let mapped = num.map({ (n: Int) -> Int in
+ return n * 2
+})
+print(mapped)
+
+let mapped2 = num.map { $0 * 5 }
+print(mapped2)
+
+
+//型の構成 プロパティ
+//インスタンスプロパティ　インスタンス化しないと使用できない。
+class MyClass {
+  var var1: Int = 1
+  let var2 = "name"
+}
+let myClass = MyClass()
+print(myClass.var1) 
+print(myClass.var2) 
+
+
+//タイププロパティ インスタンス化はできない。初期値を設定する必要がある。
+struct Person {
+  var name = "Taro"
+
+  // static キーワードをプロパティにつける。
+  static var kind = "Human"
+}
+// インスタンス化しないでアクセス可能
+print(Person.kind) 
+
+//クラスプロパティ
+class Person2 {
+  var name = "Taro"
+
+  // class キーワードをつけて、ゲッタを定義する
+  class var kind: String {
+    get{
+    return "Human"
+    }
+  }
+}
+print(Person2.kind)
+//コンピューテッドプロパティ
+struct DrinkServer {
+  var age = 10
+
+  var drink: String {
+    // ゲッタを定義
+    get {
+      if age >= 20 {
+        return "Beer"
+      }
+
+      return "Orange Juice"
+    }
+
+    // セッタを定義
+    set {
+      print("setの値です: \(newValue)")
+    }
+  }
+}
+
+var drinkServer = DrinkServer()
+let drink = drinkServer.drink 
+print(drink)
+drinkServer.age = 30
+let drink2 = drinkServer.drink 
+print(drink2)
+drinkServer.drink = "Whisky"
+
+
+//サブスクリプト　配列や辞書などのコレクションにアクセスできるための記述
+struct Person{
+  var pets: [String]
+  subscript(index: Int) -> String {
+    get{
+      return pets[index]
+    }
+    set{
+      pets[index] = newValue
+    }
+  }
+}
+var person1 = Person(pets: ["Cat", "Dog", "Rabbit"])
+print(person1[0])
+person1[1] = "Hamster"
+print(person1[1] )
+
+//スタティックサブスクリプト
+enum Animal: Int {
+  case cat = 1, dog, rabbit, Hamster
+  static subscript(n: Int) -> Animal{
+    return Animal(rawValue: n)!
+  }
+}
+print(Animal[3])
+
+//イニシャライザ　インスタンスを初期化させること
+//型のインスタンス化の前にイニシャライザをする理由は、イニシャライザでプロパティの値を全て満たさないと、型の整合性がとれなくなるため
+struct Peron2{
+  let name: String
+  let age: Int
+
+  init(name: String, age: Int){
+    self.name = name
+    self.age = age
+  }
+}
+let peson3 = Peron2(name: "taro", age: 3)
+print(peson3.name)
+
+//外部引数名が利用できる。
+struct Person4 {
+  let name: String
+  let age: Int
+
+  // name に対して myName を指定する
+  // age に対しては省略させる
+  init(myName name: String, _ age: Int) {
+    self.name = name
+    self.age = age
+  }
+}
+
+let person4 = Person4(myName: "Taro", 20)
+print(person4.age)
+
+//イニシャライザ内でメソッドを呼び出す
+struct Person5 {
+  let name: String
+  let age: Int
+
+  init(name: String, age: Int) {
+    self.name = name
+    self.age = age
+
+    // メソッドを実行
+    sayName()
+  }
+
+  func sayName() {
+    print(self.name)
+  }
+}
+let person5 = Person5(name: "jiro", age: 40)
+print(person5.age)
+
+struct Person6 {
+    let name: String
+    init?(_ name: String) {
+        // 空だったら、インスタンス化しないで nil を返す
+        if name.isEmpty { return nil }
+        self.name = name
+    }
+}
+
+// インスタンス化に成功する
+let person6 = Person6("Taro") // Optional(main.Person(name: "Taro"))
+print(person6!.name)
+// 引数が空文字なので、インスタンス化に失敗する
+let person7 = Person6("") 
