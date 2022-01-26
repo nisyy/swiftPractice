@@ -1,0 +1,38 @@
+//メモリ管理
+//ARC | Automatic Reference Counting 新しいインスタンスが作成されるたびに、値を保存するためのメモリを確保
+//強参照の循環 | 循環参照
+class User {
+  weak var profile: Profile?
+  init() {}
+  //デイニシャライザ  インスタンスが解放されたか確認
+  deinit {
+    print("Userクラスのインスタンスが解放されました")
+  }
+}
+
+class Profile {
+  weak var user: User?
+  var closure: (() -> Void)?
+  let prop = "prop"
+
+  func setClosure() {
+    closure = { [unowned self] in
+      print("\(self.prop) が呼ばれました")
+    }
+  }
+  init() {}
+
+  deinit {
+    print("Profileクラスのインスタンスが解放されました")
+  }
+}
+var user1: User? = User()
+var profile1: Profile! = Profile()
+user1?.profile = profile1
+profile1?.user = user1
+profile1.setClosure()
+profile1.closure!()
+
+
+user1 = nil
+profile1 = nil

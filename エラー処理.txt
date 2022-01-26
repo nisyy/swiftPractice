@@ -1,0 +1,151 @@
+// エラー処理
+//do-catch
+struct APIError: Error {}
+
+do {
+  print("処理を実行しました1")
+
+  // throwでエラーを投げる
+  throw APIError()
+
+  // throw するのでここは呼ばれない
+  print("処理を実行しました2")
+} catch {
+  // エラーをキャッチ
+  print(error)
+}
+//パターンマッチ
+enum APIError2: Error {
+  case network
+  case unexpected(String)
+}
+
+do {
+  throw APIError2.unexpected("予期せぬエラーです")
+
+// パターンマッチでエラーをキャッチする
+} catch APIError2.unexpected(let unexpectedError) {
+  // 定数 error は使えない
+  // 明示的に定数 unexpectedError を使う
+  print(unexpectedError)
+}
+
+//準拠させるのは主に列挙型が一般的、一つの列挙型に全てのエラーを定義するのではなく、エラーの種類に合わせてそれぞれ定義するのが推奨されている。
+
+//throws
+enum SomeError: Error {
+  case unexpected(String)
+}
+// throws キーワードを宣言する
+func method() throws -> Void {
+  print("関数3が呼びされました")
+
+  throw SomeError.unexpected("予期せぬエラー3です")
+}
+do {
+  try method()
+} catch SomeError.unexpected(let error) {
+  print(error)
+}
+
+//イニシャライザでエラーキャッチ
+//try エラーをもつ関数を実行するには、try キーワードを使う。
+enum ItemError: Error {
+  case invalid(String)
+}
+struct Item {
+  let quantity: Int
+  
+  // throws キーワードを宣言
+  init(quantity: Int) throws {
+    if quantity < 5 {
+      throw ItemError.invalid("エラー")
+    }
+
+    self.quantity = quantity
+  }
+}
+do {
+  let itemss = try Item(quantity: 30)
+  print(itemss.quantity)
+} catch ItemError.invalid(let error) {
+  print(error)
+}
+
+
+//Result型
+//型引数に Success と Failure をとる列挙型
+struct Image {
+  var path: String
+}
+
+enum ImageError: Error {
+  case notFound
+  case permissionDenied
+}
+
+let exists = false
+
+func loadImage(path: String) -> Result<Image, ImageError> {
+  // 成功したらインスタンスを返す
+  if exists {
+      let image = Image(path: path)
+      return .success(image)
+  }
+  
+  // ロードに失敗したらerrorを返す
+  return .failure(ImageError.notFound)
+}
+let result = loadImage(path: "/my/path/image.png")
+
+switch result {
+case .success(let image):
+  print(image)
+case .failure(.notFound):
+  print("NOT FOUND")
+case .failure(.permissionDenied):
+  print("PERMISSION DENIED")
+}
+
+//assert　　Swiftの基本的なデバッグ機能の一つ
+//第一引数に条件式を渡し、第二引数にプログラムが終了したときに出力するメッセージを渡す。
+func method(_ arg: Int) {
+  assert(arg < 10, "プログラムを終了します。")
+
+  print("処理を実行する")
+}
+
+method(100)
+
+//assertionFailure 
+//条件式を与えずに強制的に処理をストップするメソッド
+func method2(_ arg: Int) {
+  assertionFailure("プログラム2を終了します。")
+
+  print("処理を実行する")
+}
+
+method2(100)
+//precondition
+//条件が満たされなかった場合に実行時エラー
+func method3(_ arg: Int) {
+  precondition(arg < 10, "プログラムを終了します")
+
+  print("処理を実行する")
+}
+
+method3(100)
+
+//preconditionとassertの違い
+//最適化をしたときの挙動 preconditionは事前の条件を満たすか判定するのに使用する。assertはassertはデバッグ時のみ有効
+
+
+//fetalError デバッグとリリース時の両方で強制的にストップ
+//定外の状況になったときや、前提条件として必要な値が渡されてないからプログラムを終了させたいとき
+func method4() {
+  fatalError("プログラムを終了します。")
+
+  print("処理を実行する")
+}
+
+method4()

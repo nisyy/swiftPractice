@@ -1,0 +1,39 @@
+//型キャスト
+//基本的に同じクラス階層のスーパークラスとサブクラスの間で行われる
+//is
+class Button {}
+
+class RedButton: Button {
+  func red() -> String {
+    "red"
+  }
+}
+
+class BlueButton: Button {}
+
+class GreenButton {}
+
+// GreenButtonのインスタンスを追加
+let array: [Any] = [RedButton(),BlueButton(), GreenButton()]
+
+for a in array {
+  // Buttonを継承しているインスタンスのみ出力する
+  if a is Button {
+    print("Button")
+  }
+}
+//ダウンキャスト as?
+// Button型として代入
+let a: Button = RedButton()
+let c = GreenButton()
+// RedButtonにダウンキャストする
+let b = a as? RedButton
+let d = c as? RedButton
+print(b?.red())
+print(d)
+// as! はダウンキャストに失敗すると実行時エラー
+// let f = c as! RedButton
+
+//アップキャスト　as
+let string: String = "sample"
+let any: Any = string as Any //String型からAny型へアップキャスト

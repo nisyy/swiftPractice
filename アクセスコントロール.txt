@@ -1,0 +1,38 @@
+//アクセスコントロール
+//モジュール内の要素に対して外部からのアクセスを制御する仕組みのこと
+class Apple {
+    //そのクラス間のみアクセス可能
+    private let macBook = "MacBook"
+    //private(set)を利用すると、setはprivate、getはinternalの制限にすることができる
+    private(set) var airPods = "airpods"
+    //一つのプロジェクト内のターゲットが同一であれば呼び出せる。継承やoverrideもできる。
+    internal let iPhone = "iPhone"
+    //同じfile内であればアクセス可能
+    fileprivate let imac = "iMac"
+    //一つのプロジェクト内のターゲットが同一でなくても呼び出せるが継承やoverrideはできない。
+    public var appleWatch = "appleWatch"
+    //一つのプロジェクト内のターゲットが同一でなくても呼び出せるが、継承やoverrideもできる。
+    open var  macPro = "macPro"
+}
+
+extension Apple {
+    public func hoge1(){
+        print(macBook)
+    }
+
+    func hoge2(){
+        print(macBook)
+    }
+
+    private func hoge3(){
+        print(macBook)
+    }
+}
+
+let apple = Apple()
+print(apple.iPhone)
+print(apple.imac)
+//error:apple.macBook   'macBook' is inaccessible due to 'private' protection level
+apple.hoge1()
+apple.hoge2()
+//error: apple.hoge3() //error: 'hoge3' is inaccessible due to 'private' protection level
